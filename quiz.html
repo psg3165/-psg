@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>사자성어 퀴즈</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; text-align: center; }
+    h1 { color: #333; }
+    button { margin: 10px; padding: 10px 20px; font-size: 16px; }
+    #result { margin-top: 15px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>사자성어 퀴즈</h1>
+  <p id="question">퀴즈를 시작하세요!</p>
+
+  <!-- 보기 버튼 미리 생성 -->
+  <button id="btn1"></button>
+  <button id="btn2"></button>
+  <button id="btn3"></button>
+  <button id="btn4"></button>
+
+  <p id="result"></p>
+  <button id="nextBtn">다음 문제</button>
+
+  <script>
+    // 사자성어 데이터
+    const 사자성어목록 = [
+      {word:"杞人憂天", meaning:"쓸데없는 걱정을 함", example:"그는 늘 작은 일에도 걱정이 많다."},
+      {word:"塞翁之馬", meaning:"인생의 길흉화복은 예측할 수 없음", example:"이번 실패가 기회가 될 수도 있다."},
+      {word:"百戰百勝", meaning:"백 번 싸우면 백 번 이김", example:"철저히 준비하면 백전백승이다."},
+      {word:"自業自得", meaning:"자기가 한 대로 결과를 얻음", example:"그는 결국 자업자득으로 책임을 지게 되었다."},
+      {word:"千載一遇", meaning:"천년에 한 번 만날 기회", example:"이런 기회는 절대 놓치지 말자."},
+      {word:"一石二鳥", meaning:"하나로 두 가지 이익을 얻음", example:"운동도 하고 공부도 된다니 일석이조다."},
+      {word:"朝三暮四", meaning:"간사하게 속여 이득을 취함", example:"그의 말은 조삼모사라 믿을 수 없다."},
+      {word:"九死一生", meaning:"거의 죽을 뻔하다가 살아남", example:"교통사고에서 구사일생으로 살아났다."},
+      {word:"名實相符", meaning:"이름과 실제가 서로 들어맞음", example:"그는 명실상부한 리더다."},
+      {word:"刻骨銘心", meaning:"마음 깊이 새겨 잊지 않음", example:"스승의 가르침을 각골명심하겠다."}
+    ];
+
+    let 현재문제 = 0;
+    let 점수 = 0;
+
+    const questionEl = document.getElementById("question");
+    const resultEl = document.getElementById("result");
+    const nextBtn = document.getElementById("nextBtn");
+
+    // 미리 만든 버튼들
+    const btns = [
+      document.getElementById("btn1"),
+      document.getElementById("btn2"),
+      document.getElementById("btn3"),
+      document.getElementById("btn4")
+    ];
+
+    function shuffle(array) {
+      return array.sort(() => Math.random() - 0.5);
+    }
+
+    function showQuestion() {
+      resultEl.textContent = "";
+      if (현재문제 >= 사자성어목록.length) {
+        questionEl.textContent = `퀴즈 종료! 점수: ${점수} / ${사자성어목록.length}`;
+        nextBtn.style.display = "none";
+        btns.forEach(b => b.style.display="none");
+        return;
+      }
+
+      const q = 사자성어목록[현재문제];
+      questionEl.textContent = q.word;
+
+      // 보기 4개 생성
+      let choices = [q.meaning];
+      while (choices.length < 4) {
+        let rand = 사자성어목록[Math.floor(Math.random() * 사자성어목록.length)].meaning;
+        if (!choices.includes(rand)) choices.push(rand);
+      }
+      choices = shuffle(choices);
+
+      // 버튼에 텍스트 넣기
+      btns.forEach((b, i) => {
+        b.textContent = choices[i];
+        b.style.display = "inline-block";
+        b.disabled = false; // 이전 클릭 방지 초기화
+        b.onclick = () => checkAnswer(choices[i], q.meaning);
+      });
+    }
+
+    function checkAnswer(selected, correct) {
+      if (selected === correct) {
+        resultEl.textContent = "정답! ✅";
+        점수++;
+      } else {
+        resultEl.textContent = "오답 ❌";
+      }
+      // 클릭 후 버튼 비활성화
+      btns.forEach(b => b.disabled = true);
+    }
+
+    nextBtn.onclick = () => {
+      현재문제++;
+      showQuestion();
+    }
+
+    // 첫 문제 표시
+    showQuestion();
+  </script>
+</body>
+</html>
